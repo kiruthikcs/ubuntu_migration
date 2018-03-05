@@ -1,16 +1,47 @@
 ---
 - include_vars: ../../vars/default.yml
 - name: Install Artifactory repo
-  get_url: url=https://bintray.com/jfrog/artifactory-pro-rpms/rpm dest=/etc/yum.repos.d/bintray-jfrog-artifactory-pro-rpms.repo
+  shell: echo "deb https://jfrog.bintray.com/artifactory-pro-debs xenial main" | sudo tee -a /etc/apt/sources.list
+  update_cache: yes
+#  get_url: url=https://bintray.com/jfrog/artifactory-pro-rpms/rpm -O bintray-jfrog-artifactory-pro-rpms.repo dest=/etc/yum.repos.d/ mode=0644
+#  state: present
+#  get_url: url=deb https://bintray.com/jfrog/artifactory-pro-rpms/rpm -O bintray-jfrog-artifactory-pro-rpms.repo dest=/etc/yum.repos.d/ mode=0644 
+#- name: Add Artifactory Pro apt repo
+#  apt_repository:
+#    repo: deb https://jfrog.bintray.com/artifactory-pro-debs xenial main
+#    #repo: 'deb https://jfrog.bintray.com/artifactory-pro-debs {distribution} {components}' https://bintray.com/jfrog/artifactory-pro-rpms/rpm
+#    state: present
+#    filename: jfrog-artifactory-pro
+#  when: artifactory_type | lower == 'pro'
+
+
+
+- name: apt-key
+  apt_key:
+    url: https://bintray.com/user/downloadSubjectPublicKey?username=jfrog
+    state: present
+#    keyserver: "keyserver.ubuntu.com"
+#    id: 6B219DCCD7639232
+
+    #when: artifactory_type | lower == 'pro'
 
 - name: Install Java and  Artifactory
-  yum: pkg={{ item }}
+  apt: pkg={{ item }}
+  install_recommends: no
   with_items:
    - jfrog-artifactory-pro
-   - java
+   - openjdk-8*
    - unzip
    - zip
    - wget
+#  package: "name=java-1.8.0-openjdk state=installed"
+  state: installed
+#  with_items:
+#    - jfrog-artifactory-pro
+#   - java
+#   - unzip
+#   - zip
+#   - wget
 
 - name: Download and Unzip MySQL JDBC jar file
   unarchive: src=https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.44.zip dest=/tmp/ remote_src=yes

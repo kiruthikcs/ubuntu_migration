@@ -1,17 +1,21 @@
 ---
 - include_vars: ../../vars/default.yml
 - name: Install Mysql repo
-  yum: name=http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm state=present
+#- apt_repository: 
+#    repo: 'ppa:mysql-5.7'
+  get_url:  url=https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb dest=/tmp/mysql-apt-config_0.8.9-1_all.deb mode=0644
+  state: installed
+##  apt: add-apt-repository -y ppa:ondrej/mysql-5.7 state=present
 
 - name: Install Mysql 5.7
-  yum: pkg={{ item }}
+  apt: pkg={{ item }}
   with_items:
-   - mysql-community-server
-   - mysql-community-client
-   - MySQL-python
+   - mysql-server
+   - mysql-client
+   - python-mysqldb
 
 - name: Start the Mysql service
-  service: name=mysqld state=started enabled=true
+  service: name=mysql state=started enabled=true
 
 - name: Find the temporaty password generated
   shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"

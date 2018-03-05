@@ -70,7 +70,7 @@ if [ $? -ne 0 ]; then
     SKIP_ANSIBLE_CHECK=0
     case $(distribution_id) in
 
-    rhel|centos|ol)
+    rhel|centos|ol|Ubuntu)
             DISTRIBUTION_MAJOR_VERSION=$(distribution_major_version)
             is_bundle_install
             if [ $? -eq 0 ]; then
@@ -78,10 +78,8 @@ if [ $? -ne 0 ]; then
                     SKIP_ANSIBLE_CHECK=1
             else
                 case ${DISTRIBUTION_MAJOR_VERSION} in
-                    6)
-                        yum install -y http://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
-                        ;;
                     DISTRIB_DESCRIPTION="Ubuntu 16.04.3 LTS")
+                        echo "inside dist description"
                         apt-get update -y
                         apt-add-repository ppa:ansible/ansible -y                
                         ;;
